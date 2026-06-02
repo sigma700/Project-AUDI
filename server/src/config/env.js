@@ -45,4 +45,4 @@ if (!parsed.success) {
   process.exit(1);
 }
 
-module.exports = parsed.data;
+export default parsed.data;

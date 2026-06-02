@@ -1,7 +1,6 @@
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
-import "express-async-errors";
 
 import {requestLogger} from "./middleware/requestLogger.js";
 import {errorHandler} from "./middleware/errorHandler.js";
