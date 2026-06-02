@@ -1,36 +1,35 @@
-import express from "express";
 import "dotenv/config";
 
-const app = express();
-const PORT = process.env.PORT;
+import db from "./infrastructure/db/client.js";
+import redis from "./infrastructure/redis/client.js";
+import {runMigrations} from "./infrastructure/db/migrate.js";
+import {createApp} from "./app.js";
+import env from "./config/env.js";
 
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+async function bootstrap() {
+  try {
+    await db.query("SELECT 1");
+    console.log("✅ PostgreSQL connected");
 
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    success: true,
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString(),
-  });
-});
+    await redis.connect();
+    console.log("✅ Redis connected");
 
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "Route not found",
-  });
-});
+    await runMigrations();
+    console.log("✅ Migrations completed");
 
-app.use((err, req, res, next) => {
-  console.error(err);
+    const app = createApp();
 
-  res.status(500).json({
-    success: false,
-    message: "Internal Server Error",
-  });
-});
+    const server = app.listen(env.PORT, () => {
+      console.log(
+        `🚀 ${env.APP_NAME} running on port ${env.PORT} [${env.NODE_ENV}]`,
+      );
+    });
 
-const server = app.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
-});
+    return server;
+  } catch (err) {
+    console.error("❌ Bootstrap failed:", err);
+    process.exit(1);
+  }
+}
+
+bootstrap();
