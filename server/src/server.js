@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import db from './infrastructure/db/client.js';
 import redis from './infrastructure/redis/client.js';
-import { runMigrations } from './infrastructure/db/migrate.js';
+import { runMigrations, runSeeds } from './infrastructure/db/migrate.js';
 import { createApp } from './app.js';
 
 import env from './config/env.js';
@@ -17,10 +17,13 @@ async function bootstrap() {
     await runMigrations();
     console.log('✅ Migrations completed');
 
+    await runSeeds();
+    console.log('✅ Seeds completed');
+
     const app = createApp();
 
     const server = app.listen(env.PORT, () => {
-      console.log(`${env.APP_NAME} running on port ${env.PORT} [${env.NODE_ENV}]`);
+      console.log(`🚀 ${env.APP_NAME} running on port ${env.PORT} [${env.NODE_ENV}]`);
     });
 
     return server;
