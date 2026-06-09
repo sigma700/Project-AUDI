@@ -66,8 +66,10 @@ export async function findOrCreateUser(phone) {
 
     const { rows: newUser } = await client.query(
       `INSERT INTO users (phone, status, kyc_status)
-       VALUES ($1, 'pending', 'unverified')
-       RETURNING *`,
+   VALUES ($1, 'pending', 'unverified')
+   ON CONFLICT (phone) DO UPDATE
+   SET updated_at = NOW()
+   RETURNING *`,
       [phone]
     );
 
