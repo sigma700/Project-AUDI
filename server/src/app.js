@@ -2,6 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import authRouter from './modules/auth/auth.routes.js';
+import usersRouter from './modules/users/user.routes.js';
 import cookieParser from 'cookie-parser';
 import { requestLogger } from './middleware/requestLogger.js';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -41,6 +42,7 @@ export function createApp() {
   // app.use("/api/v1/auth", authRoutes);
 
   app.use(errorHandler);
+  app.use('/api/v1/users', usersRouter);
   app.use('/api/v1/auth', authRouter);
   return app;
 }
