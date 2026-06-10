@@ -9,8 +9,6 @@ const BASE_URL =
 // ─── AUTH TOKEN ───────────────────────────────────────────────────────────────
 
 export async function getDarajaToken() {
-  console.log('Consumer Key:', env.DARAJA_CONSUMER_KEY);
-  console.log('Consumer Secret:', env.DARAJA_CONSUMER_SECRET);
   const credentials = Buffer.from(
     `${env.DARAJA_CONSUMER_KEY}:${env.DARAJA_CONSUMER_SECRET}`
   ).toString('base64');
