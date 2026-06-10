@@ -18,6 +18,7 @@
   "description": "",
   "dependencies": {
     "africastalking": "^0.7.9",
+    "axios": "^1.17.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",

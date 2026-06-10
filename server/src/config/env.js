@@ -1,12 +1,10 @@
-import {z} from "zod";
-import "dotenv/config";
+import { z } from 'zod';
+import 'dotenv/config';
 
 const envSchema = z.object({
-  NODE_ENV: z
-    .enum(["development", "staging", "production"])
-    .default("development"),
+  NODE_ENV: z.enum(['development', 'staging', 'production']).default('development'),
   PORT: z.coerce.number().default(3000),
-  APP_NAME: z.string().default("cashnow-api"),
+  APP_NAME: z.string().default('cashnow-api'),
 
   DB_HOST: z.string(),
   DB_PORT: z.coerce.number().default(5432),
@@ -28,19 +26,22 @@ const envSchema = z.object({
 
   AT_API_KEY: z.string(),
   AT_USERNAME: z.string(),
-  AT_SENDER_ID: z.string().default("CashNow"),
+  AT_SENDER_ID: z.string().default('CashNow'),
 
-  DARAJA_ENV: z.enum(["sandbox", "production"]).default("sandbox"),
+  DARAJA_ENV: z.enum(['sandbox', 'production']).default('sandbox'),
   DARAJA_CONSUMER_KEY: z.string().optional(),
   DARAJA_CONSUMER_SECRET: z.string().optional(),
   DARAJA_SHORTCODE: z.string().optional(),
+  DARAJA_CALLBACK_URL: z.string().default('http://localhost:3000'),
+  DARAJA_B2C_INITIATOR: z.string().optional(),
+  DARAJA_B2C_CREDENTIAL: z.string().optional(),
   DARAJA_PASSKEY: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
-  console.error("❌ Invalid environment variables:");
+  console.error('❌ Invalid environment variables:');
   console.error(parsed.error.flatten().fieldErrors);
   process.exit(1);
 }

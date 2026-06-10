@@ -3,6 +3,8 @@ import helmet from 'helmet';
 import cors from 'cors';
 import authRouter from './modules/auth/auth.routes.js';
 import creditRouter from './modules/credit/credit.routes.js';
+import paymentsRouter from './modules/payments/payments.routes.js';
+
 import loansRouter from './modules/loans/loans.routes.js';
 import usersRouter from './modules/users/user.routes.js';
 import cookieParser from 'cookie-parser';
@@ -39,15 +41,12 @@ export function createApp() {
     });
   });
 
-  // Routers mounted here as modules are built
-  // import authRoutes from "./modules/auth/auth.routes.js";
-  // app.use("/api/v1/auth", authRoutes);
-
-  app.use(errorHandler);
   app.use('/api/v1/users', usersRouter);
   app.use('/api/v1/auth', authRouter);
-
   app.use('/api/v1/loans', loansRouter);
   app.use('/api/v1/credit', creditRouter);
+  app.use('/api/v1/payments', paymentsRouter);
+  console.log('✅ paymentsRouter mounted');
+  app.use(errorHandler);
   return app;
 }
