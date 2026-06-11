@@ -3,6 +3,7 @@ import {
   handleStkCallback,
   handleB2cCallback,
   getLoanPayments,
+  initiateFeesPayment,
 } from './payments.service.js';
 
 export async function stkPushHandler(req, res) {
@@ -24,6 +25,17 @@ export async function stkCallbackHandler(req, res) {
   await handleStkCallback(req.body).catch((err) =>
     console.error('STK callback error:', err.message)
   );
+}
+
+export async function feesPaymentHandler(req, res) {
+  const { loan_id } = req.body;
+  const result = await initiateFeesPayment(req.user.sub, loan_id);
+
+  res.json({
+    status: 'success',
+    message: result.message,
+    data: result,
+  });
 }
 
 export async function b2cCallbackHandler(req, res) {

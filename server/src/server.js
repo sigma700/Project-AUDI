@@ -4,6 +4,8 @@ import redis from './infrastructure/redis/client.js';
 import { runMigrations, runSeeds } from './infrastructure/db/migrate.js';
 import { createApp } from './app.js';
 import env from './config/env.js';
+import { startNotificationsWorker } from './modules/notifications/notifications.worker.js';
+import { startReminderScheduler } from './modules/notifications/reminder.scheduler.js';
 
 async function bootstrap() {
   try {
@@ -28,6 +30,9 @@ async function bootstrap() {
     app.listen(env.PORT, () => {
       console.log(`🚀 ${env.APP_NAME} running on port ${env.PORT} [${env.NODE_ENV}]`);
     });
+
+    startNotificationsWorker();
+    startReminderScheduler();
   } catch (err) {
     console.error('❌ Bootstrap failed:', err);
     process.exit(1);

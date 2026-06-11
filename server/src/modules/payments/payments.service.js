@@ -71,6 +71,55 @@ export async function initiateStkPush(userId, loanId) {
   };
 }
 
+// ─── PAY UPFRONT FEES ─────────────────────────────────────────────────────────
+
+export async function initiateFeesPayment(userId, loanId) {
+  const { rows } = await db.query(
+    `SELECT l.id, l.principal, l.status, l.user_id, u.phone
+     FROM loans l
+     JOIN users u ON u.id = l.user_id
+     WHERE l.id = $1
+     AND l.user_id = $2
+     AND l.deleted_at IS NULL`,
+    [loanId, userId]
+  );
+
+  if (rows.length === 0) throw new AppError('Loan not found', 404);
+
+  const loan = rows[0];
+
+  if (loan.status !== 'pending_fees') {
+    throw new AppError('Fees already paid for this loan', 400);
+  }
+
+  // Calculate fees
+  const { calculateUpfrontFees } = await import('../loans/loans.service.js');
+  const fees = calculateUpfrontFees(parseFloat(loan.principal));
+
+  // Trigger STK push for fees
+  const result = await stkPush({
+    phone: loan.phone,
+    amount: fees.totalUpfront,
+    loanId: loan.id,
+    accountRef: `FEES${loan.id.slice(0, 8).toUpperCase()}`,
+  });
+
+  // Create pending repayment record for fees
+  await db.query(
+    `INSERT INTO repayments (
+      loan_id, user_id, amount, channel, status, phone
+    ) VALUES ($1, $2, $3, 'mpesa', 'pending', $4)`,
+    [loanId, userId, fees.totalUpfront, loan.phone]
+  );
+
+  return {
+    checkoutRequestId: result.CheckoutRequestID,
+    merchantRequestId: result.MerchantRequestID,
+    fees,
+    message: `Pay KES ${fees.totalUpfront} to activate your loan.`,
+  };
+}
+
 // ─── DISBURSE LOAN ────────────────────────────────────────────────────────────
 
 export async function disburseLoan(loanId) {

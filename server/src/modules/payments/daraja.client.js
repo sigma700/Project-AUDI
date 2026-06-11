@@ -1,17 +1,20 @@
 import axios from 'axios';
 import env from '../../config/env.js';
-
 const BASE_URL =
   env.DARAJA_ENV === 'production'
     ? 'https://api.safaricom.co.ke'
     : 'https://sandbox.safaricom.co.ke';
 
-// ─── AUTH TOKEN ───────────────────────────────────────────────────────────────
-
 export async function getDarajaToken() {
-  const credentials = Buffer.from(
-    `${env.DARAJA_CONSUMER_KEY}:${env.DARAJA_CONSUMER_SECRET}`
-  ).toString('base64');
+  const key = (env.DARAJA_CONSUMER_KEY || '').trim();
+  const secret = (env.DARAJA_CONSUMER_SECRET || '').trim();
+
+  console.log('Key length:', key.length);
+  console.log('Secret length:', secret.length);
+
+  const credentials = Buffer.from(`${key}:${secret}`).toString('base64');
+
+  console.log('Sending Base64:', credentials);
 
   const res = await axios.get(`${BASE_URL}/oauth/v1/generate?grant_type=client_credentials`, {
     headers: { Authorization: `Basic ${credentials}` },
@@ -19,7 +22,6 @@ export async function getDarajaToken() {
 
   return res.data.access_token;
 }
-
 // ─── STK PUSH ─────────────────────────────────────────────────────────────────
 
 export async function stkPush({ phone, amount, loanId, accountRef }) {

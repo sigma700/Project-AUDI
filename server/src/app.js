@@ -9,8 +9,11 @@ import loansRouter from './modules/loans/loans.routes.js';
 import usersRouter from './modules/users/user.routes.js';
 import cookieParser from 'cookie-parser';
 import { requestLogger } from './middleware/requestLogger.js';
+import notificationsRouter from './modules/notifications/notifications.routes.js';
+
 import { errorHandler } from './middleware/errorHandler.js';
 import env from './config/env.js';
+import adminRouter from './modules/admin/admin.routes.js';
 
 export function createApp() {
   const app = express();
@@ -46,6 +49,10 @@ export function createApp() {
   app.use('/api/v1/loans', loansRouter);
   app.use('/api/v1/credit', creditRouter);
   app.use('/api/v1/payments', paymentsRouter);
+  app.use('/api/v1/admin', adminRouter);
+
+  app.use('/api/v1/notifications', notificationsRouter);
+
   console.log('✅ paymentsRouter mounted');
   app.use(errorHandler);
   return app;

@@ -5,6 +5,7 @@ import {
   b2cCallbackHandler,
   b2cTimeoutHandler,
   paymentHistory,
+  feesPaymentHandler,
 } from './payments.controller.js';
 import { authenticate } from '../auth/auth.middleware.js';
 // // console.log('Auth router:', authRouter);
@@ -21,5 +22,6 @@ router.post('/webhooks/b2c-timeout', b2cTimeoutHandler);
 router.use(authenticate);
 router.post('/stk-push', stkPushHandler);
 router.get('/loan/:loanId', paymentHistory);
+router.post('/pay-fees', feesPaymentHandler);
 
 export default router;
