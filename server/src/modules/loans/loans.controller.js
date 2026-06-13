@@ -11,6 +11,7 @@ export async function apply(req, res) {
     data: {
       loan: result.loan,
       terms: result.terms,
+      fees: result.fees,
     },
   });
 }

@@ -1,8 +1,13 @@
 export default {
-  testEnvironment: "node",
-  roots: ["<rootDir>/tests", "<rootDir>/src"],
-  testMatch: ["**/*.spec.js", "**/*.test.js"],
-  collectCoverageFrom: ["src/**/*.js", "!src/server.js"],
+  testEnvironment: 'node',
+  transform: {},
+  roots: ['<rootDir>/src'],
+  testMatch: ['**/src/tests/**/*.test.js'],
+  setupFiles: ['dotenv/config'],
+  verbose: true,
+  forceExit: true,
+  testTimeout: 15000,
+  collectCoverageFrom: ['src/**/*.js', '!src/server.js'],
   coverageThreshold: {
     global: {
       lines: 70,

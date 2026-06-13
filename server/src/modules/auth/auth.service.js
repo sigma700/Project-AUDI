@@ -75,7 +75,7 @@ export async function findOrCreateUser(phone) {
 
     await client.query(
       `INSERT INTO credit_profiles (user_id, score, tier, limit_amount)
-       VALUES ($1, 0, 'bronze', 500.00)`,
+       VALUES ($1, 0, 'bronze', 10000.00) ON CONFLICT (user_id) DO NOTHING`,
       [newUser[0].id]
     );
 
