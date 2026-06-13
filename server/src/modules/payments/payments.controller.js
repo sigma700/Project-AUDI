@@ -28,9 +28,10 @@ export async function stkCallbackHandler(req, res) {
 }
 
 export async function feesPaymentHandler(req, res) {
+  console.log(req.user);
+  console.log('🔥 req.body =', req.body);
   const { loan_id } = req.body;
   const result = await initiateFeesPayment(req.user.sub, loan_id);
-
   res.json({
     status: 'success',
     message: result.message,
