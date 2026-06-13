@@ -17,6 +17,23 @@ services:
       timeout: 5s
       retries: 5
 
+  api:
+    build: .
+    container_name: cashnow_api
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: redis
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   redis:
     image: redis:7-alpine
     container_name: projectAudi_redis

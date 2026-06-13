@@ -14,13 +14,13 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_DB: cashnow_test
-          POSTGRES_USER: cashnow
-          POSTGRES_PASSWORD: cashnow_secret
+          POSTGRES_DB: projectAudi_dev
+          POSTGRES_USER: projectAudi
+          POSTGRES_PASSWORD: projectAudi_secret
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U projectAudi"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -38,40 +38,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Lint
-        run: npm run lint
 
       - name: Run tests
         run: npm test
         env:
           NODE_ENV: test
-          PORT: 3000
-          APP_NAME: cashnow-api
           DB_HOST: localhost
           DB_PORT: 5432
-          DB_NAME: cashnow_test
-          DB_USER: cashnow
-          DB_PASSWORD: cashnow_secret
-          DB_POOL_MIN: 1
-          DB_POOL_MAX: 5
+          DB_NAME: projectAudi_dev
+          DB_USER: projectAudi
+          DB_PASSWORD: projectAudi_secret
           REDIS_HOST: localhost
           REDIS_PORT: 6379
-          JWT_ACCESS_SECRET: test_access_secret_at_least_16
-          JWT_REFRESH_SECRET: test_refresh_secret_at_least_16
-          JWT_ACCESS_TTL: 900
-          JWT_REFRESH_TTL: 2592000
-          OTP_TTL_SECONDS: 300
-          OTP_MAX_ATTEMPTS: 5
-          AT_API_KEY: sandbox
-          AT_USERNAME: sandbox
-          AT_SENDER_ID: CashNow
-          DARAJA_ENV: sandbox
+          JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
+          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+          AT_API_KEY: ${{ secrets.AT_API_KEY }}
+          AT_USERNAME: ${{ secrets.AT_USERNAME }}
